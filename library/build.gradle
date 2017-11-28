@@ -40,3 +40,48 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:1.0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError  false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'rxlocation'
+
+    publishedGroupId = 'com.github.luucasdornelas'
+    libraryName = 'RxLocation'
+    artifact = 'rxlocation'
+
+    libraryDescription = 'RxLocation is a support library to location manager with RxJava2'
+
+    siteUrl = 'https://github.com/luucasdornelas/rxlocation'
+    gitUrl = 'https://github.com/luucasdornelas/rxlocation.git'
+
+    libraryVersion = '0.0.1'
+
+    developerId = 'luucasdornelas'
+    developerName = 'Lucas Dornelas Vieira'
+    developerEmail = 'lucasdornelasv@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
