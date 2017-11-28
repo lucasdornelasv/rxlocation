@@ -1,4 +1,4 @@
-package com.github.lucasdornelas.rxlocation;
+package com.github.luucasdornelas.rxlocation;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.github.lucasdornelas.rxlocation", appContext.getPackageName());
+        assertEquals("com.github.luucasdornelas.rxlocation", appContext.getPackageName());
     }
 }

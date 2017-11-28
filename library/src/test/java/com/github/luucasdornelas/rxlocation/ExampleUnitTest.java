@@ -1,4 +1,4 @@
-package com.github.lucasdornelas.rxlocation;
+package com.github.luucasdornelas.rxlocation;
 
 import org.junit.Test;
 

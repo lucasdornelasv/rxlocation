@@ -7,7 +7,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:2.3.3'
+
+        //region Lambda
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
+        //endregion
         
 
         // NOTE: Do not place your application dependencies here; they belong
