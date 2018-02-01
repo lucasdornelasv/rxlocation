@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,6 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.exceptions.Exceptions;
+import io.reactivex.plugins.RxJavaPlugins;
 
 /**
  * Created by Lucas on 21/11/2017.
@@ -26,7 +29,10 @@ public class LocationObservable extends Observable<Location> {
     //endregion
 
     //region CONSTRUCTORS
-    public LocationObservable(LocationManager locationManager, String provider, long minTime, float minDistance) {
+    public LocationObservable(LocationManager locationManager,
+                              String provider,
+                              long minTime,
+                              float minDistance) {
         this.locationManager = locationManager;
         this.provider = provider;
         this.minTime = minTime;
@@ -42,10 +48,15 @@ public class LocationObservable extends Observable<Location> {
     protected void subscribeActual(Observer<? super Location> observer) {
         Listener listener = new Listener(observer);
         observer.onSubscribe(listener);
-        if(locationManager.isProviderEnabled(provider)){
-            locationManager.requestLocationUpdates(provider, minTime, minDistance, listener);
-        }else{
-            observer.onError(new ProviderDisabledException(provider));
+        try {
+            if(locationManager.isProviderEnabled(provider)){
+                locationManager.requestLocationUpdates(
+                        provider, minTime, minDistance, listener, Looper.getMainLooper());
+            }else{
+                throw new ProviderDisabledException(provider);
+            }
+        } catch (Throwable e) {
+            observer.onError(e);
         }
     }
     //endregion
@@ -61,7 +72,7 @@ public class LocationObservable extends Observable<Location> {
         //endregion
 
         //region CONSTRUCTORS
-        public Listener(Observer<? super Location> observer){
+        Listener(Observer<? super Location> observer){
             this.observer = observer;
         }
         //endregion
@@ -97,7 +108,12 @@ public class LocationObservable extends Observable<Location> {
         @Override
         public void dispose() {
             if (unsubscribed.compareAndSet(false, true)) {
-                onDispose();
+                try {
+                    onDispose();
+                } catch (Throwable e) {
+                    Exceptions.throwIfFatal(e);
+                    RxJavaPlugins.onError(e);
+                }
             }
         }
 
